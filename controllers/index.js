@@ -1,3 +1,4 @@
 module.exports = {
-  auth: require('./auth.js')
+  auth: require('./auth.js'),
+  videos: require('./videos.js')
 }

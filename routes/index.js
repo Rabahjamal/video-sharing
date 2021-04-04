@@ -22,8 +22,12 @@ router.post('/refresh',
 
 router.delete('/logout',
               body('refreshToken', 'refreshToken does not exists').exists(),
-              controllers.auth.logout)
+              controllers.auth.logout);
 
+// videos routes
+router.post('/upload', middlewares.authenticateJWT, controllers.videos.upload);
+
+router.get('/watch/:id/:filename', controllers.videos.watch)
 // dummy routes for testing
 router.get('/', middlewares.authenticateJWT, controllers.auth.get_home_page)
 router.get('/video', middlewares.authenticateJWT, (req, res) => {

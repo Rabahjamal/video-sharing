@@ -1,4 +1,4 @@
-const services = require('../db')
+const db = require('../db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
@@ -78,7 +78,7 @@ module.exports = {
 
   saveUserToDatabase(user, callback)
   {
-      var users_collection = services.getUserCollection();
+      var users_collection = db.getUserCollection();
       checkIfEmailExists(user, users_collection, (err) => {
         if(err) {
           callback(err);
@@ -108,7 +108,7 @@ module.exports = {
 
   authenticateUser(userCredentials, callback)
   {
-      const users_collection = services.getUserCollection();
+      const users_collection = db.getUserCollection();
       checkUserCredentials(userCredentials, users_collection, (err, user) => {
         if(err) {
           callback(err);
@@ -129,7 +129,7 @@ module.exports = {
 
   refreshToken(token, callback)
   {
-    const users_collection = services.getUserCollection();
+    const users_collection = db.getUserCollection();
     findRefreshToken(token, users_collection, (err) => {
       if(err) {
         callback(err);
@@ -149,7 +149,7 @@ module.exports = {
 
   logoutUser(token, callback)
   {
-    const users_collection = services.getUserCollection();
+    const users_collection = db.getUserCollection();
     findUserByRefreshToken(token, users_collection, (err, user) => {
       if(err) {
         callback(err);
