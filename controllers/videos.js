@@ -63,6 +63,13 @@ module.exports = {
     console.log(req.params.id);
     console.log(req.params.filename);
     console.log("----------------------------------------------------");
+    if(req.params.filename == "master.m3u8") {
+      services.videos.incrementViewsCount(req.params.id, (err) => {
+        if(err) {
+          res.status(400).send(err.message);
+        }
+      });
+    }
     services.videos.getVideoPath(req.params.id, (err, path) => {
       if(err) {
         res.status(400).send(err.message);

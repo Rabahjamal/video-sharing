@@ -28,6 +28,16 @@ router.delete('/logout',
 router.post('/upload', middlewares.authenticateJWT, controllers.videos.upload);
 
 router.get('/watch/:id/:filename', controllers.videos.watch)
+
+// stats routes
+router.get('/views/:id', controllers.stats.views);
+router.get('/likes/:id', controllers.stats.likes);
+router.get('/dislikes/:id', controllers.stats.dislikes);
+
+router.put('/like/:id', middlewares.authenticateJWT, controllers.stats.like);
+router.put('/dislike/:id', middlewares.authenticateJWT, controllers.stats.dislike);
+
+
 // dummy routes for testing
 router.get('/', middlewares.authenticateJWT, controllers.auth.get_home_page)
 router.get('/video', middlewares.authenticateJWT, (req, res) => {

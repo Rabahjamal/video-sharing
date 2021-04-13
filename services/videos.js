@@ -11,7 +11,10 @@ module.exports = {
       const videoObject = { url: videoFile.destination,
                             title: videoInfo.title,
                             description: videoInfo.description,
-                            datetime: datetime.toString() };
+                            datetime: datetime.toString(),
+                            views: 0,
+                            likes: 0,
+                            dislikes: 0 };
       console.log(videoObject);
 
      /// processing part
@@ -59,7 +62,7 @@ module.exports = {
         if(err)
           callback(err);
         else if(!result) {
-          callback(new Error("The video id is not correct!"))
+          callback(new Error("Video id is wrong!"))
         }
         else {
           cache[videoId] = result.url;
@@ -68,6 +71,21 @@ module.exports = {
       })
     }
 
+  },
+
+  incrementViewsCount(videoId, callback) {
+    const videos_collection = db.getVideoCollection();
+
+    videos_collection.updateOne({_id: db.constructObjectId(videoId)}, {$inc: {views: 1}}, (err, result) => {
+      if(err) {
+        callback(err);
+      } else if(!result) {
+        callback(new Error("Video id is wrong!"));
+      }
+      else {
+        callback(null);
+      }
+    })
   }
 
 
