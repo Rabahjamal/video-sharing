@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Ubload video</title>
+
+    <style>
+      body {
+        background-color: #ecedec;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+
+          <div class="mb-3 mt-3">
+
+            <h2 class="mb-3" style="font-weight: 300">Upload video</h2>
+
+            <div class="form-group mb-3">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="file_input" name="video" oninput="input_filename();">
+                <label for="file_input" id="file_input_label" class="custom-file-label">Select file</label>
+              </div>
+            </div>
+
+            <div class="input-group mb-3">
+              <input type="text" id="title_input" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+              <input type="text" id="description_input" class="form-control" placeholder="Description" aria-label="Description" aria-describedby="basic-addon1">
+            </div>
+
+            <button onclick="upload('/upload')" id="upload_btn" class="btn btn-primary">Upload</button>
+            <button class="btn btn-primary d-none" id="loading_btn" type="button" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Uploading...
+            </button>
+            <button class="btn btn-primary d-none" id="processing_btn" type="button" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Processing...
+            </button>
+
+            <button class="btn btn-secondary d-none" id="cancel_btn" type="button">Cancel upload</button>
+
+          </div>
+
+          <div id="progress_wrapper" class="d-none">
+            <label id="progress_status">50% uploaded</label>
+            <div class="progress mb-3">
+              <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" area-valuemin="0" area-valuemax="100"></div>
+            </div>
+
+            <div id="alert_wrapper"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+
+      var progress = document.getElementById("progress");
+      var progress_wrapper = document.getElementById("progress_wrapper");
+      var progress_status = document.getElementById("progress_status");
+
+      var upload_btn = document.getElementById("upload_btn");
+      var loading_btn = document.getElementById("loading_btn");
+      var processing_btn = document.getElementById("processing_btn");
+      var cancel_btn = document.getElementById("cancel_btn");
+
+      var alert_wrapper = document.getElementById("alert_wrapper");
+
+      var input = document.getElementById("file_input");
+      var file_input_label = document.getElementById("file_input_label");
+
+      var title_input = document.getElementById("title_input");
+      var description_input = document.getElementById("description_input");
+
+      function show_alert(message, alert) {
+        console.log(message)
+        alert_wrapper.innerHTML = `
+          <div class="alert alert-${alert} alert-dismissible fade show" role="alert">
+            <span>${message}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        `;
+      };
+
+      function input_filename() {
+        file_input_label.innerText = input.files[0].name;
+      };
+
+      function upload(url) {
+
+        if(!input.value) {
+          show_alert("No file selected", "warning");
+          return;
+        }
+
+        var data = new FormData();
+
+        var request = new XMLHttpRequest();
+
+        request.responseType = "json";
+
+        alert_wrapper.innerHTML = "";
+
+        input.disabled = true;
+
+        upload_btn.classList.add("d-none");
+
+        loading_btn.classList.remove("d-none");
+
+        cancel_btn.classList.remove("d-none");
+
+        progress_wrapper.classList.remove("d-none");
+
+        var file = input.files[0];
+
+        var filename = file.name;
+
+        var filesize = file.size;
+
+        data.append("video", file);
+        data.append("title", title_input.value);
+        data.append("description", description_input.value);
+
+        request.upload.addEventListener("progress", function(e) {
+
+          var loaded = e.loaded;
+          var total = e.total;
+
+          var percentage_complete = (loaded / total) * 100;
+          console.log(percentage_complete);
+
+          if(percentage_complete == 100) {
+            reset_upload();
+          }
+
+          progress.setAttribute("style", `width: ${Math.floor(percentage_complete)}%`);
+          progress_status.innerText = `${Math.floor(percentage_complete)}% uploaded`;
+
+        })
+
+        request.addEventListener("load", function(e) {
+
+          if(request.status == 200) {
+
+            show_alert(`${request.response.message}`, "success");
+
+          } else {
+
+            show_alert("Error uploading file", "danger");
+
+          }
+
+          reset_processing();
+
+        })
+
+        request.addEventListener("error", function(e) {
+          reset();
+          show_alert("Error uploading file", "danger");
+        })
+
+        request.addEventListener("abort", function(e) {
+          reset();
+          show_alert("Upload canceled", "primary");
+        })
+
+        request.open("post", url);
+        request.send(data);
+
+        cancel_btn.addEventListener("click", function() {
+
+          request.abort();
+
+        })
+
+      } // end upload
+
+      function reset_upload() {
+        cancel_btn.classList.add("d-none");
+
+        loading_btn.classList.add("d-none");
+
+        processing_btn.classList.remove("d-none");
+
+        progress_wrapper.classList.add("d-none");
+
+        progress.setAttribute("style", "width: 0%");
+      }
+
+      function reset_processing() {
+        input.value = null;
+
+        input.disabled = false;
+
+        processing_btn.classList.add("d-none");
+
+        upload_btn.classList.remove("d-none");
+
+        file_input_label.innerText = "Select file";
+      }
+
+      function reset() {
+
+        input.value = null;
+
+        input.disabled = false;
+
+        cancel_btn.classList.add("d-none");
+
+        loading_btn.classList.add("d-none");
+
+        upload_btn.classList.remove("d-none");
+
+        progress_wrapper.classList.add("d-none");
+
+        progress.setAttribute("style", "width: 0%");
+
+        file_input_label.innerText = "Select file";
+
+      }
+
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
