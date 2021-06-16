@@ -29,6 +29,8 @@ router.post('/upload', middlewares.authenticateJWT, controllers.videos.upload);
 
 router.get('/watch/:id/:filename', controllers.videos.watch)
 
+router.get('/video/:id/', middlewares.authenticateJWT, controllers.videos.getVideo);
+
 router.get('/videos', controllers.videos.getVideos);
 
 router.get('/videos/:user_id/', middlewares.authenticateJWT, controllers.videos.getUserVideos)

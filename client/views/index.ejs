@@ -7,12 +7,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-
-
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
     <% if (typeof libs !== 'undefined') { %>
@@ -85,17 +84,17 @@
       <div class="row">
       <!-- This is the EJS syntax to create a loop -->
       <% videos.forEach(function(video, index) { %>
-        <div class="col-sm-12">
+        <div class="col-sm-8 col-sm-offset-2">
           <div class="panel">
             <div class="panel-heading">
-              <img src="https://image.flaticon.com/icons/png/512/3237/3237472.png" alt="Avatar" class="avatar panel-title" style="margin-right: 5px; margin-bottom: 10px;">
+              <a href="/profile/<%= video.user.id %>"><img src="https://image.flaticon.com/icons/png/512/3237/3237472.png" alt="Avatar" class="avatar panel-title" style="margin-right: 5px; margin-bottom: 10px;"></a>
               <a href="/profile/<%= video.user.id %>" class="panel-title" ><%= video.user.username %></a>
               <h3 class="panel-title"><strong><%= video.title %></strong></h3>
               <p><%= video.description %></p>
             </div>
-            <div class="panel-body">
+            <div class="panel-body embed-responsive embed-responsive-16by9" >
               <!-- <h1><%= video.url %></h1> -->
-              <div id="player-<%= video._id %>" align='center'></div>
+               <div id="player-<%= video._id %>" align='center' class="embed-responsive-item"></div>
                 <script>
                   var player = new Clappr.Player({source: "http://0.0.0.0:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
                   title: 'Quality',
@@ -107,7 +106,15 @@
                   labelCallback: function(playbackLevel, customLabel) {
                       return customLabel + playbackLevel.level.height+'p'; // High 720p
                   }
-                }});
+                },
+                height: '100%',
+                width: '100%',
+                });
+                var w = document.getElementById("player-<%= video._id %>").offsetWidth;
+                var h = document.getElementById("player-<%= video._id %>").offsetHeight;
+                console.log(w);
+                console.log(h);
+                //player.resize({height: 100%, width: 100%});
               </script>
             </div>
             <div class="panel-footer small">

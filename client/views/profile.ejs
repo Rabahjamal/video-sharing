@@ -9,8 +9,8 @@
 
 
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
 
@@ -82,23 +82,24 @@
 
   <div class="container">
     <div class="jumbotron text-center">
-      <h1><span class="glyphicon glyphicon-bullhorn"></span></h1>
-      <h2>Video Sharing</h2>
+      <h1><span ><img src="https://image.flaticon.com/icons/png/512/3237/3237472.png" alt="Avatar" class="avatar" style="width: 120px; height: 120px">
+      </span></h1>
+      <h2><strong><%= username %></strong></h2>
+      <h4><%= numberOfVideos %> videos </h4>
     </div>
+      <h3 class="text-left"> Uploads </h3><br>
 
     <div class="row">
     <!-- This is the EJS syntax to create a loop -->
     <% videos.forEach(function(video, index) { %>
-      <div class="col-sm-12">
+      <div class="col-sm-4">
         <div class="panel">
           <div class="panel-heading">
                 <h3 class="panel-title"><strong><%= video.title %></strong></h3>
-                <p><%= video.description %></p>
           </div>
-          <div class="panel-body" >
+          <a href="/video/<%= video._id %>"><div class="panel-body embed-responsive embed-responsive-16by9" >
             <!-- <h1><%= video.url %></h1> -->
-            <div class="embed-responsive embed-responsive-16by9">
-              <div id="player-<%= video._id %>" align='center'></div>
+              <div id="player-<%= video._id %>" align='center' class="embed-responsive-item"></div>
               <script>
                 var player = new Clappr.Player({source: "http://0.0.0.0:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
                 title: 'Quality',
@@ -107,19 +108,22 @@
                     1: 'Med', // 240kbps
                     0: 'Low', // 120kbps
                 },
+                volume: 0,
                 labelCallback: function(playbackLevel, customLabel) {
                     return customLabel + playbackLevel.level.height+'p'; // High 720p
                 }
-              }
+              },
+              height: '100%',
+              width: '100%',
               });
               var w = document.getElementById("player-<%= video._id %>").offsetWidth;
               var h = document.getElementById("player-<%= video._id %>").offsetHeight;
               console.log(w);
               console.log(h);
-              //player.resize({height: h, width: w});
+              //player.resize({height: 250, width: 250});
+              player.mute();
             </script>
-          </div>
-          </div>
+          </div></a>
           <div class="panel-footer small">
           <!--  <p>By <%= video.author %></p> -->
           <p> <%= video.views %> views  <%= video.likes %> likes  <%= video.dislikes %> dislikes </p>

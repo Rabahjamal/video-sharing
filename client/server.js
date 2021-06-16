@@ -183,14 +183,38 @@ app.get('/profile/:id', getAccessToken, (req, res) => {
       if(err) {
         res.status(500).send(err.message);
       } else {
-        console.log(data.body)
+        if(data.body.length == 0)
+        {
+          res.redirect('/videos');
+        } else {
+          console.log(data.body)
+          console.log(data.body[0].user.username)
+          console.log(data.body.length)
+          //res.render('videos', {videos: data.body, libs: ['level-selector']})
 
-        //res.render('videos', {videos: data.body, libs: ['level-selector']})
-
-        res.render('profile', {videos: data.body, libs: ['level-selector']});
+          res.render('profile', { username: data.body[0].user.username,
+                                  numberOfVideos: data.body.length,
+                                  videos: data.body, libs: ['level-selector']});
+        }
       }
     })
 
+})
+
+app.get('/video/:id', getAccessToken, (req, res) => {
+  request
+  .get("0.0.0.0:3000/video/"+req.params.id)
+  .set("Authorization", "Bearer " + req.cookies.accessToken)
+  .end((err, data) => {
+    if(err) {
+      res.status(500).send(err.message);
+    } else {
+      console.log(data.body)
+      //res.render('videos', {videos: data.body, libs: ['level-selector']})
+
+      res.render('video', {video: data.body, libs: ['level-selector']});
+    }
+  })
 })
 
 app.listen(8080);

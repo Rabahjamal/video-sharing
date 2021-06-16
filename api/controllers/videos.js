@@ -92,6 +92,18 @@ module.exports = {
     })
   },
 
+  getVideo(req, res) {
+
+    services.videos.getVideo(req.params.id, (err, result) => {
+      if(err) {
+        res.status(400).send(err.message);
+      } else {
+        res.json(result);
+      }
+    });
+
+  },
+
   getVideos(req, res) {
     services.videos.getAllVideos((err, result) => {
       if(err) {

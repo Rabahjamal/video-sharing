@@ -86,6 +86,21 @@ module.exports = {
     })
   },
 
+  getVideo(id, callback) {
+    const videos_collection = db.getVideoCollection();
+
+    videos_collection.findOne({_id: db.constructObjectId(id)}, (err, result) => {
+      if(err)
+        callback(err);
+      else if(!result) {
+        callback(new Error("Video id is wrong!"))
+      }
+      else {
+        callback(null, result);
+      }
+    })
+  },
+
   getAllVideos(callback) {
     const videos_collection = db.getVideoCollection();
 
@@ -99,7 +114,6 @@ module.exports = {
   },
 
   getVideosByUserID(user_id, callback) {
-    const users_collection = db.getUserCollection();
     const videos_collection = db.getVideoCollection();
 
     /*users_collection.findOne({_id: db.constructObjectId(user_id)}, (err, result) => {
