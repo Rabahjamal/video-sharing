@@ -68,7 +68,12 @@
         <button type="submit" class="btn btn-default">Search</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Logout</a></li>
+        <li>
+          <!--<form action="/logout" method="post">
+              <button type="submit" class="btn btn-default">Logout</button>
+          </form>-->
+          <a href="">Logout</a>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -95,7 +100,7 @@
               <!-- <h1><%= video.url %></h1> -->
                <div id="player-<%= video._id %>" align='center' class="embed-responsive-item"></div>
                 <script>
-                  var player = new Clappr.Player({source: "http://0.0.0.0:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
+                  var player = new Clappr.Player({source: "http://192.168.100.3:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
                   title: 'Quality',
                   labels: {
                       2: 'High', // 500kbps
@@ -117,9 +122,9 @@
               </script>
             </div>
             <div class="panel-footer small">
-            <i onclick="like('darkblue', 'like_button-<%= video._id %>')" id="like_button-<%= video._id %>" class="fa fa-thumbs-up"></i>
-            <i onclick="dislike('darkblue', 'dislike_button-<%= video._id %>')" id="dislike_button-<%= video._id %>" class="fa fa-thumbs-down"></i>
-            <p> <%= video.views %> views  <%= video.likes %> likes  <%= video.dislikes %> dislikes </p>
+            <i onclick="like('darkblue', '<%= video._id %>')" id="like_button-<%= video._id %>" class="fa fa-thumbs-up"></i>
+            <i onclick="dislike('darkblue', '<%= video._id %>')" id="dislike_button-<%= video._id %>" class="fa fa-thumbs-down"></i>
+            <p><a id="views-<%= video._id %>" style="color: #333;"><%= video.views %> views</a> <a id="likes-<%= video._id %>" style="color: #333;"><%= video.num_of_likes %> likes</a> <a id="dislikes-<%= video._id %>" style="color: #333;"><%= video.num_of_dislikes %> dislikes</a> </p>
             <p> <%= video.datetime %> </p>
             </div>
           </div>
@@ -131,32 +136,84 @@
 
     <script>
 
-      function like(color, id) {
-          // x.classList.toggle("fa-thumbs-down");
-          // document.getElementById(id).style.property = new style
-          var likeButton = document.getElementById(id);
-          if(likeButton.style.color != color) {
-            likeButton.style.color = color;
-            localStorage.setItem(id, color);
+      function like(color, videoId) {
+          var likeButton = document.getElementById('like_button-'+videoId);
+          var dislikeButton = document.getElementById('dislike_button-'+videoId);
+          if(dislikeButton.style.color == color) {
+            dislikeButton.style.color = 'black';
           }
+          likeButton.style.color = color;
+          var request1 = new XMLHttpRequest();
+
+          request1.onload = function(e) {
+            var request2 = new XMLHttpRequest();
+
+            request2.responseType = "json";
+
+            request2.onload = function(e) {
+              console.log(request2.response.Likes)
+              console.log(request2.response.Dislikes)
+              var numOfLikesLink = document.getElementById('likes-'+videoId);
+              var numOfDislikesLink = document.getElementById('dislikes-'+videoId);
+              numOfLikesLink.innerHTML = request2.response.Likes + " likes ";
+              numOfDislikesLink.innerHTML = request2.response.Dislikes + " dislikes ";
+            }
+            request2.open('GET', '/videoStats/'+videoId);
+            request2.send(null);
+          }
+          request1.open('PUT', '/like/'+videoId);
+          request1.send(null);
+          //console.log(request2.response.Likes);
       }
 
-      function dislike(color, id) {
-        var dislikeButton = document.getElementById(id);
-        if(dislikeButton.style.color != color) {
-          dislikeButton.style.color = color;
-          localStorage.setItem(id, color);
+      function dislike(color, videoId) {
+        var dislikeButton = document.getElementById('dislike_button-'+videoId);
+        var likeButton = document.getElementById('like_button-'+videoId);
+        if(likeButton.style.color == color) {
+          likeButton.style.color = 'black';
         }
+        dislikeButton.style.color = color;
+
+        var request1 = new XMLHttpRequest();
+
+        request1.onload = function(e) {
+          var request2 = new XMLHttpRequest();
+
+          request2.responseType = "json";
+
+          request2.onload = function(e) {
+            console.log(request2.response.Likes)
+            console.log(request2.response.Dislikes)
+            var numOfLikesLink = document.getElementById('likes-'+videoId);
+            var numOfDislikesLink = document.getElementById('dislikes-'+videoId);
+            numOfLikesLink.innerHTML = request2.response.Likes + " likes ";
+            numOfDislikesLink.innerHTML = request2.response.Dislikes + " dislikes ";
+          }
+          request2.open('GET', '/videoStats/'+videoId);
+          request2.send(null);
+        }
+        request1.open('PUT', '/dislike/'+videoId);
+        request1.send(null);
+
       }
 
 
     </script>
 
     <% videos.forEach(function(video, index) { %>
-        <script>
-            like(localStorage.getItem('like_button-<%= video._id %>'), 'like_button-<%= video._id %>');
-            dislike(localStorage.getItem('dislike_button-<%= video._id %>'), 'dislike_button-<%= video._id %>');
-        </script>
+        <% if (video.liked) { %>
+          <script>
+              var likeButton = document.getElementById('like_button-<%= video._id %>');
+              likeButton.style.color = 'darkblue';
+          </script>
+        <% } %>
+
+        <% if (video.disliked) { %>
+          <script>
+              var dislikeButton = document.getElementById('dislike_button-<%= video._id %>');
+              dislikeButton.style.color = 'darkblue';
+          </script>
+        <% } %>
     <% }) %>
 
 

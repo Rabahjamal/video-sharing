@@ -102,7 +102,7 @@ module.exports = {
             else {
               user.id = result.insertedId;
               const accessToken = generateAccessToken(user);
-              callback(null, {accessToken: accessToken, refreshToken: refreshToken});
+              callback(null, {accessToken: accessToken, refreshToken: refreshToken, userId: user.id});
             }
           })
         }
@@ -124,7 +124,7 @@ module.exports = {
             else {
               user.id = result.value._id;
               const accessToken = generateAccessToken(user);
-              callback(null, {accessToken: accessToken, refreshToken: refreshToken});
+              callback(null, {accessToken: accessToken, refreshToken: refreshToken, userId: user.id});
             }
           })
         }

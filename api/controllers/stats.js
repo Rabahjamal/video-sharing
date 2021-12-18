@@ -18,7 +18,7 @@ module.exports = {
       if(err) {
           res.status(400).send(err.message);
       } else {
-        res.json({likes: result});
+        res.json({Likes: result});
       }
     });
   },
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   like(req, res) {
-    services.stats.likeVideo(req.params.id, (err) => {
+    services.stats.likeVideo(req.params.id, req.payload.id, (err) => {
       if(err) {
           res.status(400).send(err.message);
       } else {
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   dislike(req, res) {
-    services.stats.dislikeVideo(req.params.id, (err) => {
+    services.stats.dislikeVideo(req.params.id, req.payload.id, (err) => {
       if(err) {
           res.status(400).send(err.message);
       } else {

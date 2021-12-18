@@ -13,8 +13,8 @@ module.exports = {
                             description: videoInfo.description,
                             datetime: datetime.toString(),
                             views: 0,
-                            likes: 0,
-                            dislikes: 0,
+                            // likes: [],
+                            // dislikes: [],
                             user: userData};
       //console.log(videoObject);
 

@@ -96,7 +96,7 @@
               <!-- <h1><%= video.url %></h1> -->
                <div id="player-<%= video._id %>" align='center' class="embed-responsive-item"></div>
                 <script>
-                  var player = new Clappr.Player({source: "http://0.0.0.0:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
+                  var player = new Clappr.Player({source: "http://192.168.100.3:3000/watch/<%= video._id %>/master.m3u8", parentId: "#player-<%= video._id %>", plugins: [LevelSelector], levelSelectorConfig: {
                   title: 'Quality',
                   labels: {
                       2: 'High', // 500kbps
@@ -118,7 +118,7 @@
               </script>
             </div>
             <div class="panel-footer small">
-            <p> <%= video.views %> views  <%= video.likes %> likes  <%= video.dislikes %> dislikes </p>
+            <p> <%= video.views %> views  <%= video.num_of_likes %> likes  <%= video.num_of_dislikes %> dislikes </p>
             <p> <%= video.datetime %> </p>
             </div>
           </div>
@@ -127,6 +127,11 @@
       <% }) %>
       </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 
 </body>
 

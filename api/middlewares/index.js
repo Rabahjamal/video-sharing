@@ -13,8 +13,6 @@ const authenticateJWT = (req, res, next) => {
             }
 
             req.payload = payload;
-            console.log("0: ")
-            console.log(req.payload)
             next();
         });
     } else {

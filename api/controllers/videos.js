@@ -98,6 +98,26 @@ module.exports = {
       if(err) {
         res.status(400).send(err.message);
       } else {
+
+        if(result['likes']) {
+            if(result['likes'].find(elm => elm == req.payload.id)) {
+                result['liked'] = 1;
+            } else {
+                result['liked'] = 0;
+            }
+        } else {
+            result['liked'] = 0;
+        }
+
+        if(result['dislikes']) {
+            if(result['dislikes'].find(elm => elm == req.payload.id)) {
+                result['disliked'] = 1;
+            } else {
+                result['disliked'] = 0;
+            }
+        } else {
+            result['disliked'] = 0;
+        }
         res.json(result);
       }
     });
@@ -105,6 +125,37 @@ module.exports = {
   },
 
   getVideos(req, res) {
+    services.videos.getAllVideos((err, result) => {
+      if(err) {
+        res.status(400).send(err.message);
+      } else {
+        result.forEach((item, i) => {
+            if(item['likes']) {
+                if(item['likes'].find(elm => elm == req.payload.id)) {
+                    item['liked'] = 1;
+                } else {
+                    item['liked'] = 0;
+                }
+            } else {
+                item['liked'] = 0;
+            }
+
+            if(item['dislikes']) {
+                if(item['dislikes'].find(elm => elm == req.payload.id)) {
+                    item['disliked'] = 1;
+                } else {
+                    item['disliked'] = 0;
+                }
+            } else {
+                item['disliked'] = 0;
+            }
+        });
+        res.json(result);
+      }
+    });
+  },
+
+  getVideosNoAuth(req, res) {
     services.videos.getAllVideos((err, result) => {
       if(err) {
         res.status(400).send(err.message);
